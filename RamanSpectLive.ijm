@@ -13,6 +13,7 @@ macro "RamanSpectLive [Q]" {
 	laser = 561;   //laser wavelength in nm
 	shift = true;  // display as Raman shift
 	label = "wavelenght/nm;
+	Live = true; //keep refreshing the plot - for live camera display
 
 	x=newArray(pixNum);
 	y=newArray(pixNum);
@@ -34,20 +35,23 @@ macro "RamanSpectLive [Q]" {
 		
 	LoopRun = true;
 	while (LoopRun) {
-		selectImage(ID);
-		for (i = 0; i < pixNum; i++) {
-			y[i] = getPixel(i,0);
+		if (isOpen(ID)) {;
+			selectImage(ID);
+			for (i = 0; i < pixNum; i++) {
+				y[i] = getPixel(i,0);
+			}
+			//Array.getStatistics(y,Ymin,Ymax);
+	
+			Plot.create("plot",label,"instensity");
+			//Plot.setLimits(Xmin,Xmax,NaN,NaN);
+			Plot.setColor("blue");
+			Plot.add("line",x,y);
+	
+			Plot.update();
+			wait(refRate);
+			if (Live == true) LoopRun = true;
 		}
-		//Array.getStatistics(y,Ymin,Ymax);
-
-		Plot.create("plot",label,"instensity");
-		//Plot.setLimits(Xmin,Xmax,NaN,NaN);
-		Plot.setColor("blue");
-		Plot.add("line",x,y);
-
-		Plot.update();
-		wait(refRate);
-		LoopRun = true; 
+		else LoopRun = false;
 	}
 
 }
