@@ -5,4 +5,4 @@ FIJI/Image J macros created by NOBIC facilities staff for microscopy facilities 
 All the macros here are provided "AS IS" in good faith. The developers shall not be held liable for any damage or loses resulting directly or indirectly form the use of the macros provided here. Neither do the developers guarantee in any way the functionality of the macros.
 
 # License
-The designs are provided under GNU General Public License v3.0.
+The macros are provided under GNU General Public License v3.0.
