@@ -12,7 +12,7 @@ macro "RamanSpectLive [Q]" {
 	refRate = 100;  //plot resfresh rate in ms
 	laser = 561;   //laser wavelength in nm
 	shift = true;  // display as Raman shift
-	label = "wavelenght/nm;
+	label = "wavelenght/nm";
 	Live = true; //keep refreshing the plot - for live camera display
 
 	x=newArray(pixNum);
