@@ -40,9 +40,9 @@ function ExportSpectRa(dir) {
 
 				} 
 				
-		 		saveAs("Results", Dir+name+".txt");
+		 		saveAs("Results", dir+name+".txt");
 		 		selectWindow(name);
-		 		//saveAs("Tif", Dir+name);
+		 		//saveAs("Tif", dir+name);
 		 		//print (dir+name);
 				close();
        		}

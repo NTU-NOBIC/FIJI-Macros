@@ -9,7 +9,7 @@
 macro "RamanProcess" {
 
 	//parameters of out-of-cell spectra rejection
-	MinPeak = 50; //minimum offset of large peak over silent region
+	MinPeak = 200; //minimum offset of large peak over silent region
 	
 	//spike removal parameters
 	SpikeWidth = 3; //maximum spike width in pixels, 3 or 5 recommended
@@ -282,45 +282,63 @@ macro "RamanProcess" {
 					val = getPixel(i, 0) - Baseline[i];
 					setPixel(i, 0, val);
 				}
-
-				//normalise
-				if(norm) {
-					makeRectangle(LargeStart, 0, LargeEnd-LargeStart, 1);
-					getStatistics(area, PeakInt);
-					run("Select None");
-					
-					run("Multiply...", "value="+PeakNorm/PeakInt);
-				}
-
-				//collect values for plotting, averaging and export
-				for (i = 0; i < pixNum; i++) {
-					selectImage(Spect);	
-					y[i] = getPixel(i, 0);
-					if (average) {
-						selectImage(Average);
-						setPixel(i, ImCount, y[i]);	
-					}
-					setResult(label, i, x[i]);
-					setResult("value", i, y[i]);			
-				}
+				//secondary screening to avoid apparently high peaks caused by baseline
+				makeRectangle(LargeStart, 0, LargeEnd-LargeStart, 1);
+				getStatistics(area, PeakIntS);
+				run("Select None");
 	
-				if (individSpectra) {
-					Plot.setColor("gray");
-					Plot.add("line",x,y);
-					if (baseline){	
-						Plot.setColor("black");
-						Plot.add("line",x,Baseline);
+				makeRectangle(PeakFootStart, 0, PeakFootStart-PeakFootEnd, 1);
+				getStatistics(area, PeakFootIntS);
+				run("Select None");
+	
+				CellScr = PeakIntS - PeakFootIntS;
+				if (CellScr > MinPeak) {
+
+					//normalise
+					if(norm) {
+						makeRectangle(LargeStart, 0, LargeEnd-LargeStart, 1);
+						getStatistics(area, PeakInt);
+						run("Select None");
+						
+						run("Multiply...", "value="+PeakNorm/PeakInt);
 					}
+	
+					//collect values for plotting, averaging and export
+					for (i = 0; i < pixNum; i++) {
+						selectImage(Spect);	
+						y[i] = getPixel(i, 0);
+						if (average) {
+							selectImage(Average);
+							setPixel(i, ImCount, y[i]);	
+						}
+						setResult(label, i, x[i]);
+						setResult("value", i, y[i]);			
+					}
+		
+					if (individSpectra) {
+						Plot.setColor("gray");
+						Plot.add("line",x,y);
+						if (baseline){	
+							Plot.setColor("black");
+							Plot.add("line",x,Baseline);
+						}
+					}
+				
+					selectImage(Spect);
+					saveAs("Tif", Resdir+name);
+					close();
+					ImCount++;
+					
+					if (export) saveAs("Results", Resdir+name+".csv");
+					run("Clear Results");
+					
+				} else {
+					selectImage(Spect);
+					close();
 				}
-			
+			} else {
 				selectImage(Spect);
-				saveAs("Tif", Resdir+name);
 				close();
-				ImCount++;
-				
-				if (export) saveAs("Results", Resdir+name+".csv");
-				run("Clear Results");
-				
 			}
 			selectImage(Orig);
        		close();
@@ -328,7 +346,7 @@ macro "RamanProcess" {
        	showProgress(m+1, M+1);
 	}
 
-	//calculate average specctrum and standard deviations
+	//calculate average spectrum and standard deviations
 	if(average) {
 		
 		for (i = 0; i < pixNum; i++) {
