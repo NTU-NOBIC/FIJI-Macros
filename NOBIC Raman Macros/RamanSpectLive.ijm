@@ -13,7 +13,6 @@ macro "RamanSpectLive [Q]" {
 	laser = 561;   //laser wavelength in nm
 	shift = true;  // display as Raman shift
 	label = "wavelenght/nm";
-	Live = true; //keep refreshing the plot - for live camera display
 
 	x=newArray(pixNum);
 	y=newArray(pixNum);
@@ -49,7 +48,7 @@ macro "RamanSpectLive [Q]" {
 	
 			Plot.update();
 			wait(refRate);
-			if (Live == true) LoopRun = true;
+			if (!isOpen("plot")) LoopRun = false;
 		}
 		else LoopRun = false;
 	}
