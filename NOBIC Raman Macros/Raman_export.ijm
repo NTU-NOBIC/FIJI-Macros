@@ -15,14 +15,14 @@ Dir = getDirectory("Folder");
 ExportSpectRa(Dir);
 run("Clear Results");
 setBatchMode(true); 
-print("\\Clear"); //clear Results
+print("\\Clear"); //clear Log
 
 function ExportSpectRa(dir) {
 	list = getFileList(dir);
     for (j=0; j<list.length; j++) {
     	print (list[j]);
 		if (endsWith(list[j], "/")) ExportSpectRa(dir+list[j]);
-       	if (endsWith(list[j], ".ome.tif")){
+       	if (endsWith(list[j], ".tif")){
        		path = dir+list[j];
        		open(path);
        		name = getTitle();
