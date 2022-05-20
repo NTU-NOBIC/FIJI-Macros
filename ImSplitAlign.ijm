@@ -1,4 +1,4 @@
-// Macro to evaluate on the flight R^2 of split images during image splitter alignment
+// Macro to evaluate in real time R^2 of split images during image splitter alignment
 // to be run in MicroManager during live acquisition of the split image
 // set the live image as active before starting the macro
 // in the ROI settings window set the coordinates of the upper left corner of the first ROI, the ROI dimensions and shift to the second ROI 
