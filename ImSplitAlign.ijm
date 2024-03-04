@@ -1,8 +1,8 @@
-// Macro to evaluate in real time R^2 of split images during image splitter alignment
+// Macro to evaluate on the flight R^2 of split images during image splitter alignment
 // to be run in MicroManager during live acquisition of the split image
 // set the live image as active before starting the macro
 // in the ROI settings window set the coordinates of the upper left corner of the first ROI, the ROI dimensions and shift to the second ROI 
-// (the default values 0 and 256 correspond to horizontal split of 512x512 chip)
+// (the default values 0 and 256 correspond to vertical split of 512x512 chip)
 // the ROI correlation plot and R^2 value are updated with selected refresh rate
 // to stop the macro close the live image
 // Radek Machan, IMCF, NOBIC, www.nobic.sg
@@ -11,16 +11,28 @@
 macro "ImSplitAlign" {
 	
 	ID = getImageID();
+	orientations = newArray("horizontal", "vertical");
 	getDimensions(wx, hy, dummy, dummy, dummy);
 	
-	Dialog.create("ROI settings");
+	Dialog.create("ROI settings 1");
+	Dialog.addChoice("splitting orientation", orientations);
+	Dialog.show();
+	Orient = Dialog.getChoice();
+	Dialog.create("ROI settings 2");
 	LoopRun = true;
-	Dialog.addNumber("ROI 1 X start",10);
-	Dialog.addNumber("ROI 1 Y start",10);
-	Dialog.addNumber("ROI width",400);
-	Dialog.addNumber("ROI height",200);
-	Dialog.addNumber("X shift",0);
-	Dialog.addNumber("Y shift",256);
+	Dialog.addNumber("ROI 1 X start",round(wx/20));
+	Dialog.addNumber("ROI 1 Y start",round(hy/20));
+	if (Orient == "horizontal"){
+		Dialog.addNumber("ROI width",round((wx/2)*0.8));
+		Dialog.addNumber("ROI height",round(hy*0.9));
+		Dialog.addNumber("X shift",round(wx/2));
+		Dialog.addNumber("Y shift",0);
+	}else{		
+		Dialog.addNumber("ROI width",round((wx)*0.9));
+		Dialog.addNumber("ROI height",round((hy/2)*0.8));
+		Dialog.addNumber("X shift",0);
+		Dialog.addNumber("Y shift",round(hy/2));
+	}
 	Dialog.addNumber("Refresh rate/ms",100);
 	Dialog.show();
 	LeftX = Dialog.getNumber;
@@ -44,6 +56,11 @@ macro "ImSplitAlign" {
 		showMessage("ROIs overlap");
 		LoopRun = false; 
 	}
+	
+	setColor(0,255,0);
+	drawRect(LeftX, LeftY, TestWidth, TestHeight);
+	setColor(255,0,0);
+	drawRect(LeftX + ShiftX, LeftY + ShiftY, TestWidth, TestHeight);
 
 	while (LoopRun) {
 		for(i=0;i<TestHeight;i++) {
