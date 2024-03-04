@@ -57,12 +57,14 @@ macro "ImSplitAlign" {
 		LoopRun = false; 
 	}
 	
-	setColor(0,255,0);
-	drawRect(LeftX, LeftY, TestWidth, TestHeight);
-	setColor(255,0,0);
-	drawRect(LeftX + ShiftX, LeftY + ShiftY, TestWidth, TestHeight);
-
 	while (LoopRun) {
+
+		selectImage(ID);
+		setColor(0,255,0);
+		drawRect(LeftX, LeftY, TestWidth, TestHeight);
+		setColor(255,0,0);
+		drawRect(LeftX + ShiftX, LeftY + ShiftY, TestWidth, TestHeight);
+
 		for(i=0;i<TestHeight;i++) {
 			for(j=0; j<TestWidth;j++) {
 				p=i*TestWidth+j; 
